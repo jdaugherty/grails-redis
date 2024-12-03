@@ -1,24 +1,11 @@
-
 plugins {
     id "java-library"
     id "org.grails.grails-gsp"
     id "org.grails.grails-plugin"
-    id 'maven-publish'
-    id 'io.github.gradle-nexus.publish-plugin'
 }
 
 version = project.projectVersion
 group = 'org.grails.plugins'
-
-ext.set('isSnapshot', projectVersion.endsWith('-SNAPSHOT'))
-ext.set('isReleaseVersion', !isSnapshot)
-
-ext.set('signing.keyId', project.findProperty('signing.keyId') ?: System.getenv('SIGNING_KEY'))
-ext.set('signing.secretKeyRingFile', project.findProperty('signing.secretKeyRingFile') ?:  System.getenv('SIGNING_PASSPHRASE') ?: "${System.properties['user.home']}${File.separator}.gnupg${File.separator}secring.gpg")
-ext.set('signing.password', project.findProperty("signing.password") ?: System.getenv('SIGNING_PASSPHRASE'))
-
-
-
 
 allprojects {
 
@@ -32,23 +19,4 @@ allprojects {
             forkOptions.jvmArgs = ['-Xmx1024m']
         }
     }
-}
-
-if (isReleaseVersion) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-
-    nexusPublishing {
-        repositories {
-            sonatype {
-                def ossUser = System.getenv("SONATYPE_USERNAME") ?: project.hasProperty("sonatypeOssUsername") ? project.sonatypeOssUsername : ''
-                def ossPass = System.getenv("SONATYPE_PASSWORD") ?: project.hasProperty("sonatypeOssPassword") ? project.sonatypeOssPassword : ''
-                def ossStagingProfileId = System.getenv("SONATYPE_STAGING_PROFILE_ID") ?: project.hasProperty("sonatypeOssStagingProfileId") ? project.sonatypeOssStagingProfileId : ''
-                nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
-                snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                username = ossUser
-                password = ossPass
-                stagingProfileId = ossStagingProfileId
-            }
-    }
-}
 }
