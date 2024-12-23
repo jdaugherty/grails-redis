@@ -9,29 +9,33 @@ jobs:
       GIT_USER_NAME: 'grails-build'
       GIT_USER_EMAIL: 'grails-build@users.noreply.github.com'
     steps:
-      - name: Checkout repository
+      - name: "📥 Checkout repository"
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
-      - name: Set up JDK
+      - name: "☕️ Setup JDK"
         uses: actions/setup-java@v4
         with:
-          distribution: 'liberica'
-          java-version: '17'
-      - name: Set the current release version
+          java-version: 17
+          distribution: liberica
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+      - name: "📝 Store the current release version"
         id: release_version
-        run: echo ::set-output name=release_version::${GITHUB_REF:11}
-      - name: Run pre-release
+        run: echo "release_version=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
+      - name: "⚙ Run pre-release"
         uses: grails/github-actions/pre-release@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Generate secring file
+      - name: "🔐 Generate key file for artifact signing"
         env:
           SECRING_FILE: ${{ secrets.SECRING_FILE }}
         run: echo $SECRING_FILE | base64 -d > ${{ github.workspace }}/secring.gpg
-      - name: Publish to Sonatype OSSRH
+      - name: "📤 Publish artifacts to Sonatype"
         id: publish
-        uses: gradle/gradle-build-action@v3
+        working-directory: ./plugin
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
           NEXUS_PUBLISH_USERNAME: ${{ secrets.NEXUS_PUBLISH_USERNAME }}
@@ -41,8 +45,8 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
           SECRING_FILE: ${{ secrets.SECRING_FILE }}
-        with:
-          arguments: -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg publishToSonatype closeAndReleaseSonatypeStagingRepository
+        run: >
+          ../gradlew -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg publishToSonatype closeAndReleaseSonatypeStagingRepository
       - name: Publish Documentation
         if: success()
         uses: gradle/gradle-build-action@v3
