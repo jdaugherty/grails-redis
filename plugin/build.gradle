@@ -1,27 +1,16 @@
 plugins {
-    id "java-library"
-    id "eclipse"
-    id "idea"
-    id "org.grails.grails-plugin"
+    id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'org.grails.grails-plugin'
+    id "org.grails.grails-gsp"
+    id 'org.grails.grails-publish'
 }
 
 version = project.projectVersion
-group = "org.grails.plugins"
+group = 'org.grails.plugins'
 
-apply plugin: 'org.grails.grails-publish'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.grails:grails-bom:$grailsVersion"
-    }
-    applyMavenExclusions false
-}
+compileJava.options.release = 17
 
 configurations {
     documentation.extendsFrom compileClasspath
@@ -32,13 +21,8 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven { url "https://repo.grails.org/grails/core" }
-}
-
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-starter-tomcat"
@@ -52,7 +36,7 @@ dependencies {
     api "redis.clients:jedis:$jredisVersion"
     api "com.google.code.gson:gson:$gsonVersion"
 
-    documentation("com.github.javaparser:javaparser-core:$javaParserCoreVersion") {
+    documentation("com.github.javaparser:javaparser-core") {
         transitive = false
     }
 }
