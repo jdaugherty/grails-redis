@@ -4,10 +4,8 @@ plugins {
     id 'idea'
     id 'org.grails.grails-plugin'
     id "org.grails.grails-gsp"
-    id 'org.grails.grails-publish'
 }
 
-version = project.projectVersion
 group = 'org.grails.plugins'
 
 compileJava.options.release = 17
@@ -55,6 +53,7 @@ jar {
   exclude "src/test/projects/**"
 }
 
+apply plugin: 'org.grails.grails-publish'
 grailsPublish {
     githubSlug = 'grails/grails-redis'
     license {

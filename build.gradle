@@ -1,17 +1,29 @@
-if(!project.projectVersion.endsWith('-SNAPSHOT')) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-}
-
 allprojects {
-
     repositories {
         mavenCentral()
         maven { url "https://repo.grails.org/grails/core" }
     }
+}
 
-    tasks.withType(GroovyCompile) {
-        configure(groovyOptions) {
-            forkOptions.jvmArgs = ['-Xmx1024m']
+version = project.projectVersion
+
+subprojects { project ->
+    project.version = project.projectVersion
+
+    if(project.name.endsWith('grails-redis')) {
+        apply plugin: 'org.grails.grails-publish'
+        grailsPublish {
+            githubSlug = 'grails/grails-redis'
+            license {
+                name = 'Apache-2.0'
+            }
+            title = 'Grails Redis Plugin'
+            desc = 'This Plugin provides access to Redis and various utilities (service, annotations, etc) for caching.'
+            developers = ['tednaleid': 'Ted Naleid', 'burtbeckwith': 'Burt Beckwith', 'christianoestreich': 'Christian Oestreich',
+                          'briancoles': 'Brian Coles', 'michaelcameron': 'Michael Cameron', 'johnengelman': 'John Engelman',
+                          'davidseiler': 'David Seiler', 'jordonsaardchit': 'Jordon Saardchit', 'florianlangenhahn': 'Florian Langenhahn',
+                          'germansancho': 'German Sancho', 'johnmulhern': 'John Mulhern', 'shaunjurgemeyer': 'Shaun Jurgemeyer',
+                          'puneetbehl': 'Puneet Behl']
         }
     }
 }

@@ -1,4 +1,3 @@
-
 plugins {
     id "groovy"
     id "war"
@@ -8,7 +7,6 @@ plugins {
     id "org.grails.grails-gsp"
 }
 
-version = project.projectVersion
 group = "com.example"
 assets {
     minifyJs = true
@@ -60,4 +58,10 @@ assets {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(GroovyCompile) {
+    configure(groovyOptions) {
+        forkOptions.jvmArgs = ['-Xmx1024m']
+    }
 }
