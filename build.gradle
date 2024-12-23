@@ -1,5 +1,5 @@
-plugins {
-    id 'io.github.gradle-nexus.publish-plugin'
+if(!project.projectVersion.endsWith('-SNAPSHOT')) {
+    apply plugin: "io.github.gradle-nexus.publish-plugin"
 }
 
 allprojects {
